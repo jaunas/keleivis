@@ -45,10 +45,10 @@ Jakieś muzeum, restauracja, park, cokolwiek.
 * Dodatkowe info
 
 #### Wydarzenie
-Tak jak lokalizacja +info charakterystyczne dla wydarzeń:
+* Nazwa
 * Data (albo przedział)
 * Godzina (albo przedział)
-* Zamiast miejsca - lokalizacja
+* Lokalizacja
 
 #### Translokacja
 Opisuje sposób przebycia drogi z A do B
@@ -67,7 +67,7 @@ Baza danych na wstępie będzie potężna, trzeba będzie zaimportować jak najw
 
 ### Projekt bazy danych
 
-#### Miejsca - places
+#### Miejsca - place
 Tabela z miejscami
 
 Pole|Opis|Typ|Dodatkowe informacje
@@ -77,11 +77,66 @@ name|nazwa|string|
 geo_lat|szerokość geograficzna|float|
 geo_lng|długość geograficzna|float|
 place_type_id|typ|int|klucz obcy do tabeli z typami (państwo, gmina, województwo, ...)
+comment|dodatkowe informacje|text|
 
-#### Typy miejsc - place_types
+#### Typy miejsc - place_type
 Tabela z typami miejsc (państwo, gmina, województwo, ...)
 
 Pole|Opis|Typ|Dodatkowe informacje
 ----|----|---|--------------------
 id|identyfikator|int|
 name|nazwa|string|
+comment|dodatkowe informacje|text|
+
+#### Miejsca<->miejsca - place_place
+Tabela porządkująca miejsca w graf w celu utworzenia drzewiastej struktury
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+parent_id|identyfikator rodzica|int|
+child_id|identyfikator dziecka|int|
+
+#### Lokalizacje - localization
+Tabela z lokalizacjami przypisanymi do miejsc
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+name|nazwa|string|
+geo_lat|szerokość geograficzna|float|
+geo_lng|długość geograficzna|float|
+place_id|identyfikator miejsca|int|możliwie najniżej w hierarchii miejsc
+comment|dodatkowe informacje|text|
+
+#### Wydarzenia - event
+Tabela z wydarzeniami przypisanymi do lokalizacji
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+name|nazwa|string|
+date_start|data rozpoczęcia|date|
+date_end|data zakończenia|date|jeśli podana to przedział
+time_start|czas rozpoczęcia|time|
+time_end|czas zakończenia|time|jeśli podany to przedział
+localization_id|id lokalizacji|int|
+comment|dodatkowe informacje|text|
+
+#### Translokacja - move
+Tabela z informacją o przebytej drogi z jednego miejsca do innego
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+place_start_id|id miejsca startu|int|
+place_end_id|id miejsca zakończenia|int|
+time_start|czas rozpoczęcia|datetime|
+time_end|czas zakończenia|datetime|
+travel_type_id|id środka transportu|int|samochód, tramwaj, piechota, autostop, samolot, ...
+distance|przebyta odległość|float|zapisane w km
+comment|dodatkowe informacje|text|
+
+Trzeba jeszcze rozkminić jak połączyć dla konkretnej podróży kolejność miejsce->jazda->miejsce->jazda itd. Poza tym nie mogą to być miejsca z tabeli place, bo one są publiczne, a ktoś mógłby chcieć jakiś komentarz do tego walnąć.
+
+#### Podróż - journey
+Tabela z podróżami (plany, sprawozdania i uzupełniane na bieżąco)
