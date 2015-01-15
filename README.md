@@ -52,13 +52,30 @@ Jakieś muzeum, restauracja, park, cokolwiek.
 
 #### Translokacja
 Opisuje sposób przebycia drogi z A do B
-* Miejsce startu
 * Miejsce zakończenia
 * Środek transportu
 * Godzina i data rozpoczęcia
 * Godzina i data zakończenia
 * Przebyte km
 * Komentarz
+
+#### Podróż
+Plan, sprawozdanie, realizacja. Ze względu na to, że w danej podróży może uczestniczyć więcej niż jeden użytkownik, tabela będzie połączona relacją wiele do wielu z tabelą użytkowników.
+* Nazwa
+* Referencja do pierwszego miejsca
+* Komentarz (opis)
+
+#### Miejsce dla podróży
+Odnosić będzie się do miejsca i będzie zawierać dodatkowo informacje dla konkretnej podróży.
+* Referencja do translokacji prowadzącej z tego miejsca
+
+#### Użytkownik
+Informacje o użytkowniku
+* Imię
+* Nazwisko
+* E-mail
+* Typ użytkownika
+* Jakieś inne duperele
 
 #### Dodatkowe informacje
 Kiedy użytkownik dodaje miejsce, lokalizację albo wydarzenie. system proponuje dostępne w bazie, a jeśli ich nie ma, użytkownik je tworzy uzupełniając jak największą ilością informacji. Wtedy system daje do wyboru, czy to jest publiczne - każdy może odwiedzić, uczestniczyć, czy może prywatne - jak np. stancja Romana, domówka. Domyślnie system proponuje publiczne i wtedy to trafia do zatwierdzenia przez administratora, a ten upublicznia po zweryfikowaniu.
@@ -128,7 +145,6 @@ Tabela z informacją o przebytej drogi z jednego miejsca do innego
 Pole|Opis|Typ|Dodatkowe informacje
 ----|----|---|--------------------
 id|identyfikator|int|
-place_start_id|id miejsca startu|int|
 place_end_id|id miejsca zakończenia|int|
 time_start|czas rozpoczęcia|datetime|
 time_end|czas zakończenia|datetime|
@@ -140,3 +156,34 @@ Trzeba jeszcze rozkminić jak połączyć dla konkretnej podróży kolejność m
 
 #### Podróż - journey
 Tabela z podróżami (plany, sprawozdania i uzupełniane na bieżąco)
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+name|nazwa|string|
+journey_place_start_id|id miejsca rozpoczęcia podróży|int|
+comment|dodatkowe informacje|string|
+
+#### Miejsce dla podróży - place_for_journey
+Tabela z miejscami dla konkretnych podróży
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+place_id|id miejsca z tabeli place|int|
+move_to_id|id translokacji prowadzącej z tego miejsca|int|
+
+#### Użytkownik - user
+Tabela z użytkownikami
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+login|login|string|
+password|hasło|string|sha1?
+salt|sól do hasła|string|
+f_name|imię|string|
+l_name|nazwisko|string|
+email|e-mail|string|
+user_type_id|typ użytkownika|int|
+...|...|...|**do uzupełnienia**
