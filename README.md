@@ -1,69 +1,201 @@
-Symfony Standard Edition
-========================
+# keleivis
+## Aplikacja php do relacjonowania podróży
 
-Welcome to the Symfony Standard Edition - a fully-functional Symfony2
-application that you can use as the skeleton for your new applications.
+### Podstawowe informacje
 
-For details on how to download and get started with Symfony, see the
-[Installation][1] chapter of the Symfony Documentation.
+Portal pozwalający użytkownikow wprowadzanie planów swoich podróży, zrealizowanych podróży lub wprowadzanie informacji na bieżąco podczas podróży.
 
-What's inside?
---------------
+Schemat działania:
 
-The Symfony Standard Edition is configured with the following defaults:
+1. Użytkownik loguje się do portalu.
+1. Dodaj podróż (planuję, sprawozdaję, realizuję).
+1. Miejsce startu.
+1. Jadę
+1. Miejsce pośrednie
+1. Jadę
+  - ...
+1. Jadę
+1. Miejsce zakończenia.
 
-  * An AppBundle you can use to start coding;
+Do każdego miejsca można dodać lokalizacje, które się tam zwiedziło, wydarzenia, w których się uczestniczyło.
 
-  * Twig as the only configured template engine;
+Do każdej translokacji można dodać informację o środku transportu, przebytej odległości itp.
 
-  * Doctrine ORM/DBAL;
+Zarówno do miejsca, lokalizacji wydarzenia, translokacji można dodać obszerny komentarz.
 
-  * Swiftmailer;
+Użytkownicy tworzą społeczność:
+* mogą pozwolić na podgląd swojej podróży określonej grupie (znajomym, całej społeczności itp.)
+* mogą wspólnie uczestniczyć w podróży
 
-  * Annotations enabled for everything.
+Dostęp **tylko** dla zalogowanych użytkowników.
 
-It comes pre-configured with the following bundles:
+#### Miejsce
+Hierarchiczna drzewiasta struktura  
+Polska -> woj. podlaskie -> pow. Suwałki -> Suwałki  
+Polska -> Suwalszczyzna -> Suwałki
+* Nazwa
+* Położenie geograficzne (współrzędne)
+* Typ (państwo, powiat, gmina, miasto, wieś, dzielnica, osiedle, stan, obwód, kraj itp.)
 
-  * **FrameworkBundle** - The core Symfony framework bundle
+#### Lokalizacja
+Jakieś muzeum, restauracja, park, cokolwiek.
+* Nazwa
+* Współrzędne geograficzne
+* Miejsce (przypisana do możliwie najniższego szczebla w hierarchii miejsc)
+* Dodatkowe info
 
-  * [**SensioFrameworkExtraBundle**][6] - Adds several enhancements, including
-    template and routing annotation capability
+#### Wydarzenie
+* Nazwa
+* Data (albo przedział)
+* Godzina (albo przedział)
+* Lokalizacja
 
-  * [**DoctrineBundle**][7] - Adds support for the Doctrine ORM
+#### Translokacja
+Opisuje sposób przebycia drogi z A do B
+* Miejsce zakończenia
+* Środek transportu
+* Godzina i data rozpoczęcia
+* Godzina i data zakończenia
+* Przebyte km
+* Komentarz
 
-  * [**TwigBundle**][8] - Adds support for the Twig templating engine
+#### Podróż
+Plan, sprawozdanie, realizacja. Ze względu na to, że w danej podróży może uczestniczyć więcej niż jeden użytkownik, tabela będzie połączona relacją wiele do wielu z tabelą użytkowników.
+* Nazwa
+* Referencja do pierwszego miejsca
+* Komentarz (opis)
 
-  * [**SecurityBundle**][9] - Adds security by integrating Symfony's security
-    component
+#### Miejsce dla podróży
+Odnosić będzie się do miejsca i będzie zawierać dodatkowo informacje dla konkretnej podróży.
+* Referencja do translokacji prowadzącej z tego miejsca
 
-  * [**SwiftmailerBundle**][10] - Adds support for Swiftmailer, a library for
-    sending emails
+#### Użytkownik
+Informacje o użytkowniku
+* Imię
+* Nazwisko
+* E-mail
+* Typ użytkownika
+* Jakieś inne duperele
 
-  * [**MonologBundle**][11] - Adds support for Monolog, a logging library
+#### Dodatkowe informacje
+Kiedy użytkownik dodaje miejsce, lokalizację albo wydarzenie. system proponuje dostępne w bazie, a jeśli ich nie ma, użytkownik je tworzy uzupełniając jak największą ilością informacji. Wtedy system daje do wyboru, czy to jest publiczne - każdy może odwiedzić, uczestniczyć, czy może prywatne - jak np. stancja Romana, domówka. Domyślnie system proponuje publiczne i wtedy to trafia do zatwierdzenia przez administratora, a ten upublicznia po zweryfikowaniu.
 
-  * [**AsseticBundle**][12] - Adds support for Assetic, an asset processing
-    library
+Baza danych na wstępie będzie potężna, trzeba będzie zaimportować jak najwięcej miejsc z Polski, a do tego jeszcze będą dochodzić dane spoza kraju. Dodatkowo użytkownicy będą dodawać masę danych. Może to znacznie spowolnić działanie serwisu, ale jak to mówi Agatka: my się tym nie przejmujemy :)
 
-  * **WebProfilerBundle** (in dev/test env) - Adds profiling functionality and
-    the web debug toolbar
+### Projekt bazy danych
 
-  * **SensioDistributionBundle** (in dev/test env) - Adds functionality for
-    configuring and working with Symfony distributions
+#### Miejsca - place
+Tabela z miejscami
 
-  * [**SensioGeneratorBundle**][13] (in dev/test env) - Adds code generation
-    capabilities
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+name|nazwa|string|
+geo_lat|szerokość geograficzna|float|
+geo_lng|długość geograficzna|float|
+place_type_id|typ|int|klucz obcy do tabeli z typami (państwo, gmina, województwo, ...)
+comment|dodatkowe informacje|text|
 
-All libraries and bundles included in the Symfony Standard Edition are
-released under the MIT or BSD license.
+#### Typy miejsc - place_type
+Tabela z typami miejsc (państwo, gmina, województwo, ...)
 
-Enjoy!
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+name|nazwa|string|
+comment|dodatkowe informacje|text|
 
-[1]:  http://symfony.com/doc/2.6/book/installation.html
-[6]:  http://symfony.com/doc/2.6/bundles/SensioFrameworkExtraBundle/index.html
-[7]:  http://symfony.com/doc/2.6/book/doctrine.html
-[8]:  http://symfony.com/doc/2.6/book/templating.html
-[9]:  http://symfony.com/doc/2.6/book/security.html
-[10]: http://symfony.com/doc/2.6/cookbook/email.html
-[11]: http://symfony.com/doc/2.6/cookbook/logging/monolog.html
-[12]: http://symfony.com/doc/2.6/cookbook/assetic/asset_management.html
-[13]: http://symfony.com/doc/2.6/bundles/SensioGeneratorBundle/index.html
+#### Miejsca<->miejsca - place_place
+Tabela porządkująca miejsca w graf w celu utworzenia drzewiastej struktury
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+parent_id|identyfikator rodzica|int|
+child_id|identyfikator dziecka|int|
+
+#### Lokalizacje - localization
+Tabela z lokalizacjami przypisanymi do miejsc
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+name|nazwa|string|
+geo_lat|szerokość geograficzna|float|
+geo_lng|długość geograficzna|float|
+place_id|identyfikator miejsca|int|możliwie najniżej w hierarchii miejsc
+comment|dodatkowe informacje|text|
+
+#### Wydarzenia - event
+Tabela z wydarzeniami przypisanymi do lokalizacji
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+name|nazwa|string|
+date_start|data rozpoczęcia|date|
+date_end|data zakończenia|date|jeśli podana to przedział
+time_start|czas rozpoczęcia|time|
+time_end|czas zakończenia|time|jeśli podany to przedział
+localization_id|id lokalizacji|int|
+comment|dodatkowe informacje|text|
+
+#### Translokacja - move
+Tabela z informacją o przebytej drogi z jednego miejsca do innego
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+place_end_id|id miejsca zakończenia|int|
+time_start|czas rozpoczęcia|datetime|
+time_end|czas zakończenia|datetime|
+travel_type_id|id środka transportu|int|samochód, tramwaj, piechota, autostop, samolot, ...
+distance|przebyta odległość|float|zapisane w km
+comment|dodatkowe informacje|text|
+
+Trzeba jeszcze rozkminić jak połączyć dla konkretnej podróży kolejność miejsce->jazda->miejsce->jazda itd. Poza tym nie mogą to być miejsca z tabeli place, bo one są publiczne, a ktoś mógłby chcieć jakiś komentarz do tego walnąć.
+
+#### Podróż - journey
+Tabela z podróżami (plany, sprawozdania i uzupełniane na bieżąco)
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+name|nazwa|string|
+journey_place_start_id|id miejsca rozpoczęcia podróży|int|
+comment|dodatkowe informacje|string|
+
+#### Miejsce dla podróży - place_for_journey
+Tabela z miejscami dla konkretnych podróży
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+place_id|id miejsca z tabeli place|int|
+move_to_id|id translokacji prowadzącej z tego miejsca|int|
+
+#### Użytkownik - user
+Tabela z użytkownikami
+
+Pole|Opis|Typ|Dodatkowe informacje
+----|----|---|--------------------
+id|identyfikator|int|
+login|login|string|
+password|hasło|string|sha1?
+salt|sól do hasła|string|
+f_name|imię|string|
+l_name|nazwisko|string|
+email|e-mail|string|
+user_type_id|typ użytkownika|int|
+...|...|...|**do uzupełnienia**
+
+#### Podsumowanie
+Hm, na razie tyle przychodzi mi do głowy. Pora na technologie.
+
+### Technologie
+
+#### Framework
+Ze znanych frameworków najlepiej orientuję się w Symfony2 więc będzie to w nim napisane. Myślałem, żeby stworzyć REST API w oparciu o Symfony2 i stronę kliencką o AngularJS, ale to chyba ewentualnie jak skończę to pisać, to przerobię to na REST API. Póki co - po prostu Symfony2.
+
+Do stworzenia wyglądu oprę się o Bootstrap, w późniejszym etapie będę optymalizował wygląd pod responsywność.
+
+### Do dzieła!  
