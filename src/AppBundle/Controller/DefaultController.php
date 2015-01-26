@@ -9,10 +9,13 @@ use Symfony\Component\HttpFoundation\Response;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/app/example", name="homepage")
+     * @Route("/", name="homepage")
      */
     public function indexAction()
     {
+		if (!$this->getUser()) {
+			return $this->redirectToRoute('fos_user_security_login');
+		}
         return new Response($this->renderView('AppBundle:Default:index.html.twig'));
     }
 }
