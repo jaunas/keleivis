@@ -1,0 +1,34 @@
+{% extends "AppBundle::layout.html.twig" %}
+
+{% block title %}Administracja - użytkownicy{% endblock %}
+
+{% block content %}
+	<table class="table">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Imię</th>
+				<th>Nazwisko</th>
+				<th>Login</th>
+				<th>E-mail</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for user in users %}
+				<tr>
+					<td>{{user.id}}</td>
+					<td>{{user.fName}}</td>
+					<td>{{user.lName}}</td>
+					<td>{{user.username}}</td>
+					<td>{{user.email}}</td>
+					<td>
+						<a class="btn btn-info" data-toggle="modal" href="{{ path('app_administration_user_modal_edit', {'id': user.id}) }}" data-target="#modal"><i class="glyphicon glyphicon-edit"></i></a>
+						<button class="btn btn-danger"><i class="glyphicon glyphicon-trash"></i></button>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<a class="btn btn-success" data-toggle="modal" href="{{ path('app_administration_user_modal_new') }}" data-target="#modal"><i class="glyphicon glyphicon-plus"></i> Dodaj</a>
+{% endblock %}

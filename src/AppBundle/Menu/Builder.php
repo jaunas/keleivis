@@ -28,11 +28,26 @@ class Builder extends ContainerAware
 	{
 		$menu = $factory->createItem('root', array(
 			'childrenAttributes'	=> array(
-				'class'	=> 'nav nav-sidebar'
+				'class'	=> 'nav-sidebar'
 			)
 		));
 		
-		$menu->addChild('Overview', array('route' => 'homepage'));
+		$menu->addChild('Administration', array(
+			'label'	=> 'Administracja',
+			'route'	=> 'homepage',
+		));
+			$menu['Administration']->addChild('Users', array(
+				'label'	=> 'Użytkownicy',
+				'route'	=>	'app_administration_users'
+			));
+			$menu['Administration']->addChild('Dictionary', array(
+				'label'	=> 'Dane słownikowe',
+				'route'	=> 'homepage'
+			));
+				$menu['Administration']['Dictionary']->addChild('Places', array(
+					'label'	=> 'Miejsca',
+					'route'	=> 'homepage'
+				));
 		
 		return $menu;
 	}
