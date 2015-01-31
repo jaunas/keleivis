@@ -1,0 +1,4 @@
+AppBundle\Entity\PlaceType:
+    properties:
+        name:
+            - NotBlank: ~

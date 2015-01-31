@@ -1,0 +1,39 @@
+{% extends 'AppBundle::modal.html.twig' %}
+
+{% block start %}
+	{{ form_start(form, {'attr': {'refresh_id': 'content'} }) }}
+{% endblock %}
+
+{% block title %}
+	{{ action == 'edit' ? 'Edycja' : 'Dodawanie' }} typu miejsca
+{% endblock %}
+
+{% block body %}
+	{{ form_row(form.name) }}
+	{{ form_row(form.comment) }}
+{% endblock %}
+
+{% block footer %}
+	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	{{ form_row(form.save) }}
+{% endblock %}
+
+{% block end %}
+	{{ form_end(form) }}
+	<script>
+		$(document).ready(function() {
+			$("[name='{{ form.vars.name }}']").submit(function(e) {
+				e.preventDefault();
+				postForm($(this), function(response) {
+					if (response.success) {
+						$("#modal").modal('hide');
+					} else {
+						$("#modal .modal-content").html(response);
+					}
+				});
+				
+				return false;
+			});
+		});
+	</script>
+{% endblock %}

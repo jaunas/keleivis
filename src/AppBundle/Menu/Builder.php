@@ -46,7 +46,11 @@ class Builder extends ContainerAware
 			));
 				$menu['Administration']['Dictionary']->addChild('Places', array(
 					'label'	=> 'Miejsca',
-					'route'	=> 'homepage'
+					'route'	=> 'app_administration_dictionary_places'
+				));
+				$menu['Administration']['Dictionary']->addChild('Place types', array(
+					'label'	=> 'Typy miejsc',
+					'route'	=> 'app_administration_dictionary_place_types'
 				));
 		
 		return $menu;

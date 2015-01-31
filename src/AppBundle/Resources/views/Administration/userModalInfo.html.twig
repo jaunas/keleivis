@@ -1,0 +1,53 @@
+{% extends 'AppBundle::modal.html.twig' %}
+
+{% block title %}
+	Użytkownik {{ user.username }}
+{% endblock %}
+
+{% block body %}
+	<div class="panel panel-default">
+		<div class="panel-heading">Dane podstawowe</div>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-sm-6">Imię:</div>
+				<div class="col-sm-6">{{ user.fName }}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">Nazwisko:</div>
+				<div class="col-sm-6">{{ user.fName }}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">E-mail:</div>
+				<div class="col-sm-6">{{ user.email }}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">Aktywny:</div>
+				<div class="col-sm-6">{{ user.enabled }}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">Data ostatniego logowania:</div>
+				<div class="col-sm-6">{{ user.lastLogin | date('Y-m-d, H:i:s') }}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">Zablokowany:</div>
+				<div class="col-sm-6">{{ user.locked }}</div>
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">Przypisane role</div>
+		<div class="panel-body">
+			{% for role in user.roles %}
+				<div class="row">
+					<div class="col-sm-12">
+						{{ role }}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}
+
+{% block footer %}
+	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+{% endblock %}
