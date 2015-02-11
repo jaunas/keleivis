@@ -30,6 +30,21 @@ class AdministrationController extends Controller
 	}
 	
 	/**
+	 * @Route("administration/users/table", name="app_administration_users_table")
+	 * @Template()
+	 */
+	public function usersTableAction()
+	{
+		$em = $this->getDoctrine()->getManager();
+		$users = $em->getRepository('AppBundle:User')->findAll();
+		
+		return $this->render('AppBundle:Administration:usersTable.html.twig', array(
+			'users'	=> $users
+		));
+	}
+
+
+	/**
 	 * @Route("administration/user/modal/info/{id}", name="app_administration_user_modal_info")
 	 * @Template()
 	 * 
@@ -45,71 +60,27 @@ class AdministrationController extends Controller
 		));
 	}
 	
-//	/**
-//	 * @Route("administration/user/modal/roles/{id}", name="app_administration_user_modal_roles")
-//	 * @Template()
-//	 * 
-//	 * @param Request $request
-//	 * @param integer $id user id
-//	 */
-//	public function userModalRolesAction(Request $request, $id)
-//	{
-//		$em = $this->getDoctrine()->getManager();
-//		$user = $em->getRepository('AppBundle:User')->find($id);
-//		
-//		$form = $this->createForm(new UserRoleType(), $user, array(
-//			'action'	=> $this->generateUrl('app_administration_user_modal_roles', array('id'=>$id))
-//		));
-//
-//		if ($request->isMethod('POST')) {
-//			$form->bind($request);
-//			if ($form->isValid()) {
-//				$em->persist($user);
-//				$em->flush();
-//				
-//				return new JsonResponse(array(
-//					'success'	=> true
-//				));
-//			}
-//		}
-//		
-//		return $this->render('AppBundle:administration:userModalRole.html.twig', array(
-//			'form'	=> $form->createView()
-//		));
-//	}
-	
-	/**
-	 * @Route("administration/user/modal/delete/{id}", name="app_administration_user_modal_delete")
-	 * @Template()
-	 * 
-	 * @param integer $id user id
-	 */
-	public function userModalDeleteAction($id)
-	{
-		$em = $this->getDoctrine()->getManager();
-		$user = $em->getRepository('AppBundle:User')->find($id);
-		
-		return $this->render('AppBundle:administration:userModalDelete.html.twig', array(
-			'user'	=> $user
-		));
-	}
-	
 	/**
 	 * @Route("administration/user/delete/{id}", name="app_administration_user_delete")
 	 * @Template()
 	 * 
+	 * @param Request $request
 	 * @param integer $id user id
 	 */
-	public function userDeleteAction($id)
+	public function userDeleteAction(Request $request, $id)
 	{
 		$em = $this->getDoctrine()->getManager();
 		$user = $em->getRepository('AppBundle:User')->find($id);
 		
-		$em->remove($user);
-		$em->flush();
+		if ($request->isMethod('DELETE')) {
+			$em->remove($user);
+			$em->flush();
+			
+			return new JsonResponse(array('success' => true));
+		}
 		
-		return new JsonResponse(array(
-			'success'	=> true
+		return $this->render('AppBundle:administration:userModalDelete.html.twig', array(
+			'user'	=> $user
 		));
 	}
 	
@@ -128,17 +99,56 @@ class AdministrationController extends Controller
 	}
 	
 	/**
-	 * @Route("administration/dictionary/place/modal/add", name="app_administration_dictionary_place_add")
+	 * @Route("administration/dictionary/places/table", name="app_administration_dictionary_places_table")
 	 * @Template()
 	 */
-	public function dictionaryPlaceModalAddAction()
+	public function dictionaryPlacesTableAction()
 	{
-		$place = new Place();
+		$em = $this->getDoctrine()->getManager();
+		$places = $em->getRepository('AppBundle:Place')->findAll();
 		
-		$form = $this->createForm(new PlaceForm(), $place);
+		return $this->render('AppBundle:Administration:dictionaryPlacesTable.html.twig', array(
+			'places'	=> $places
+		));
+	}
+	
+	/**
+	 * @Route("administration/dictionary/place/{id}", name="app_administration_dictionary_place")
+	 * @Template()
+	 * 
+	 * @param Request $request
+	 * @param integer $id place id
+	 */
+	public function dictionaryPlaceAction(Request $request, $id = 0)
+	{
+		$em = $this->getDoctrine()->getManager();
+		
+		if ($id) {
+			$place = $em->getRepository('AppBundle:Place')->find($id);
+		} else {
+			$place = new Place();
+		}
+		
+		$form = $this->createForm(new PlaceForm(), $place, array(
+			'action'	=> $this->generateUrl('app_administration_dictionary_place', array('id' => $id)),
+			'method'	=> 'POST',
+			'attr'		=> array('refresh_path' => $this->generateUrl('app_administration_dictionary_places_table'))
+		));
+		
+		if ($request->isMethod('POST')) {
+			$form->bind($request);
+			
+			if ($form->isValid()) {
+				$em->persist($place);
+				$em->flush();
+				
+				return new JsonResponse(array('success' => true));
+			}
+		}
 		
 		return $this->render('AppBundle:Administration:dictionaryPlaceModalForm.html.twig', array(
-			'form'	=> $form->createView()
+			'form'	=> $form->createView(),
+			'action'	=> $id ? 'edit' : 'add'
 		));
 	}
 	
@@ -171,11 +181,13 @@ class AdministrationController extends Controller
 	}
 	
 	/**
+	 * Form modal, add and edit
+	 * 
 	 * @Route("administration/dictionary/placeType/{id}", name="app_administration_dictionary_place_type")
 	 * @Template()
 	 * 
 	 * @param Request $request
-	 * @param integer $id user id
+	 * @param integer $id placeType id
 	 */
 	public function dictionaryPlaceTypeAction(Request $request, $id = 0)
 	{
@@ -190,9 +202,7 @@ class AdministrationController extends Controller
 		$form = $this->createForm(new PlaceTypeType(), $placeType, array(
 			'action'	=> $this->generateUrl('app_administration_dictionary_place_type', array('id'=>$id)),
 			'method'	=> 'POST',
-			'attr'		=> array(
-				'refresh_path' => $this->generateUrl('app_administration_dictionary_place_types_table')
-			)
+			'attr'		=> array('refresh_path' => $this->generateUrl('app_administration_dictionary_place_types_table'))
 		));
 		
 		if ($request->isMethod('POST')) {
@@ -202,15 +212,37 @@ class AdministrationController extends Controller
 				$em->persist($placeType);
 				$em->flush();
 
-				return new JsonResponse(array(
-						'success'	=> true
-					));
+				return new JsonResponse(array('success' => true));
 			}
 		}
 		
 		return $this->render('AppBundle:Administration:dictionaryPlaceTypeModalForm.html.twig', array(
 			'form'		=> $form->createView(),
 			'action'	=> $id ? 'edit' : 'add'
+		));
+	}
+	
+	/**
+	 * @Route("administration/dictionary/placeType/delete/{id}", name="app_administration_dictionary_place_type_delete")
+	 * @Template("")
+	 * 
+	 * @param Request $request
+	 * @param integer $id placeType id
+	 */
+	public function dictionaryPlaceTypeDeleteAction(Request $request, $id)
+	{
+		$em = $this->getDoctrine()->getManager();
+		$placeType = $em->getRepository('AppBundle:PlaceType')->find($id);
+		
+		if ($request->isMethod('DELETE')) {
+			$em->remove($placeType);
+			$em->flush();
+			
+			return new JsonResponse(array('success' => true));
+		}
+		
+		return $this->render('AppBundle:Administration:dictionaryPlaceTypeModalDelete.html.twig', array(
+			'placeType'	=> $placeType
 		));
 	}
 }

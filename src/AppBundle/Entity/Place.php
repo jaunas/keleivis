@@ -45,7 +45,7 @@ class Place
     /**
      * @var string
      *
-     * @ORM\Column(name="comment", type="text")
+     * @ORM\Column(name="comment", type="text", nullable=true)
      */
     private $comment;
 	
@@ -56,16 +56,16 @@ class Place
 	private $placeType;
 	
 	/**
-	 * @ORM\ManyToMany(targetEntity="Place", mappedBy="children")
+	 * @ORM\ManyToMany(targetEntity="Place", inversedBy="children")
+	 * @ORM\JoinTable(name="place_graph",
+	 *			joinColumns={@ORM\JoinColumn(name="child_id", referencedColumnName="id")},
+	 *			inverseJoinColumns={@ORM\JoinColumn(name="parent_id", referencedColumnName="id")}
+	 *		)
 	 */
 	private $parents;
 	
 	/**
-	 * @ORM\ManyToMany(targetEntity="Place", inversedBy="parents")
-	 * @ORM\JoinTable(name="place_graph",
-	 *			joinColumns={@ORM\JoinColumn(name="parent_id", referencedColumnName="id")},
-	 *			inverseJoinColumns={@ORM\JoinColumn(name="child_id", referencedColumnName="id")}
-	 *		)
+	 * @ORM\ManyToMany(targetEntity="Place", mappedBy="parents")
 	 */
 	private $children;
 

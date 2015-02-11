@@ -19,9 +19,16 @@ class PlaceType extends AbstractType
             ->add('geoLat')
             ->add('geoLng')
             ->add('comment')
-            ->add('placeType')
-            ->add('parents')
-            ->add('children')
+            ->add('placeType', 'entity', array(
+				'class'		=> 'AppBundle:PlaceType',
+				'property'	=> 'name'
+			))
+            ->add('parents', 'entity', array(
+				'class'		=> 'AppBundle:Place',
+				'property'	=> 'name',
+				'multiple'	=> true
+			))
+			->add('save', 'submit')
         ;
     }
     

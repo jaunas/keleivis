@@ -3,28 +3,5 @@
 {% block title %}Administracja - Dane słownikowe - Miejsca{% endblock %}
 
 {% block content %}
-	<table class="table">
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Nazwa</th>
-				<th>Typ</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for place in places %}
-				<tr>
-					<td>{{place.id}}</td>
-					<td>{{place.name}}</td>
-					<td>{{place.type}}</td>
-					<td>
-						<a class="btn btn-info" data-toggle="modal" href="{{ path('app_administration_user_modal_info', {'id': user.id}) }}" data-target="#modal"><i class="glyphicon glyphicon-info-sign"></i></a>
-						<a class="btn btn-danger{{ (is_granted('ROLE_ADMIN') and 'ROLE_ADMIN' in user.roles) or 'ROLE_SUPER_ADMIN' in user.roles ? ' disabled' }}" data-toggle="modal" href="{{ path('app_administration_user_modal_delete', {'id': user.id}) }}" data-target="#modal"><i class="glyphicon glyphicon-trash"></i></a>
-					</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	<a class="btn btn-success" data-toggle="modal" href="{{ path('app_administration_dictionary_place_add') }}" data-target="#modal"><i class="glyphicon glyphicon-plus"></i> Dodaj miejsce</a>
+	{% include 'AppBundle:Administration:dictionaryPlacesTable.html.twig' %}
 {% endblock %}

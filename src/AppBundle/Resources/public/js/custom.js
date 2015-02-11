@@ -21,13 +21,17 @@ function postForm($form, callback) {
 	});
 }
 
-function ajax(button, path) {
+function ajax(button, path, method, refreshPath, refreshId) {
 	$(button).button('loading');
 
 	$.ajax({
-		type	: 'GET',
+		type	: method ? method : 'GET',
 		url		: path,
 		success	: function() {
+			if (refreshPath) {
+				ajaxLoadContent(refreshPath, refreshId);
+			}
+			
 			$(button).button('reset');
 			var modal = $(button).closest(".modal");
 			if (modal) {
@@ -42,7 +46,6 @@ function ajaxLoadContent(path, id) {
 		type	: 'GET',
 		url		: path,
 		success	: function(data) {
-			//$(document).getE
 			$("#"+id).html(data);
 		}
 	});

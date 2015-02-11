@@ -11,24 +11,42 @@ function postForm($form, callback) {
 		url		: $form.attr('action'),
 		data	: $form.serializeArray(),
 		success	: function(data) {
+			if ($form.attr('refresh_path')) {
+				ajaxLoadContent($form.attr('refresh_path'), $form.attr('refresh_id'));
+			}
+			
 			submitBtn.button('reset');
 			callback(data);
 		}
 	});
 }
 
-function ajax(button, path) {
+function ajax(button, path, method, refreshPath, refreshId) {
 	$(button).button('loading');
 
 	$.ajax({
-		type	: 'GET',
+		type	: method ? method : 'GET',
 		url		: path,
 		success	: function() {
+			if (refreshPath) {
+				ajaxLoadContent(refreshPath, refreshId);
+			}
+			
 			$(button).button('reset');
 			var modal = $(button).closest(".modal");
 			if (modal) {
 				modal.modal('hide');
 			}
+		}
+	});
+}
+
+function ajaxLoadContent(path, id) {
+	$.ajax({
+		type	: 'GET',
+		url		: path,
+		success	: function(data) {
+			$("#"+id).html(data);
 		}
 	});
 }

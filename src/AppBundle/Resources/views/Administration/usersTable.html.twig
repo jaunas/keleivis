@@ -1,0 +1,28 @@
+<table class="table">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Imię</th>
+			<th>Nazwisko</th>
+			<th>Login</th>
+			<th>E-mail</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for user in users %}
+			<tr>
+				<td>{{user.id}}</td>
+				<td>{{user.fName}}</td>
+				<td>{{user.lName}}</td>
+				<td>{{user.username}}</td>
+				<td>{{user.email}}</td>
+				<td>
+					<a class="btn btn-info" data-toggle="modal" href="{{ path('app_administration_user_modal_info', {'id': user.id}) }}" data-target="#modal"><i class="glyphicon glyphicon-info-sign"></i></a>
+					<a class="btn btn-danger{{ (is_granted('ROLE_ADMIN') and 'ROLE_ADMIN' in user.roles) or 'ROLE_SUPER_ADMIN' in user.roles ? ' disabled' }}" data-toggle="modal" href="{{ path('app_administration_user_delete', {'id': user.id}) }}" data-target="#modal"><i class="glyphicon glyphicon-trash"></i></a>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
