@@ -195,6 +195,7 @@ Hm, na razie tyle przychodzi mi do głowy. Pora na technologie.
 
 #### Framework
 Ze znanych frameworków najlepiej orientuję się w Symfony2 więc będzie to w nim napisane. Myślałem, żeby stworzyć REST API w oparciu o Symfony2 i stronę kliencką o AngularJS, ale to chyba ewentualnie jak skończę to pisać, to przerobię to na REST API. Póki co - po prostu Symfony2.
+Edit: Jednak nie. Robię REST API w Symfony 2 i samą aplikację w Angularze
 
 Do stworzenia wyglądu oprę się o Bootstrap, w późniejszym etapie będę optymalizował wygląd pod responsywność.
 
